@@ -1,0 +1,30 @@
+{
+  "name": "serverless-plugin-package-path",
+  "version": "1.0.0",
+  "description": "Serverless plugin to package python layer’s in a custom path",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fondeadora/serverless-plugin-package-path.git"
+  },
+  "keywords": [
+    "serverless",
+    "lambda",
+    "python",
+    "package",
+    "path"
+  ],
+  "author": "Fondeadora",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Fondeadora/serverless-plugin-package-path/issues"
+  },
+  "homepage": "https://github.com/Fondeadora/serverless-plugin-package-path#readme",
+  "dependencies": {
+    "serverless": "^1.64.0",
+    "serverless-python-requirements": "^5.1.0"
+  }
+}
