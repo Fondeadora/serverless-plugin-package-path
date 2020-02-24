@@ -18,60 +18,88 @@ class ServerlessPluginPackagePath {
     this.commands = {};
 
     this.hooks = {
-      "after:package:finalize": this.updatePackage.bind(this)
+      "after:package:createDeploymentArtifacts": this.updateServicePath.bind(
+        this
+      ),
+      "after:package:finalize": this.updateRequirementsPath.bind(this)
     };
   }
 
-  async updatePackage() {
-    this.serverless.cli.log("Updating package paths...");
+  async updateServicePath() {
+    this.serverless.cli.log("Updating service files paths...");
 
     return await Promise.all(
       Object.keys(this.serverless.service.layers).map(async layerName => {
-        const zipFileName = `${layerName}.zip`;
         const layerObject = this.serverless.service.getLayer(layerName);
 
-        const artifactFilePath = path.join(
-          this.serverless.config.servicePath,
-          ".serverless",
-          zipFileName
+        const artifactFilePath = this._artifactFilePath(layerName);
+        const packagesPath = this.serverless.service.custom.packagePath.path;
+
+        const artifactBuffer = await fse.readFileAsync(artifactFilePath);
+
+        const tmpPackage = new JSZip();
+        const serviceFolder = tmpPackage.folder(
+          path.join(packagesPath, layerObject.path)
         );
 
-        const filePaths = await this.resolveFilePathsLayer(layerName);
-        const buffer = await fse.readFileAsync(artifactFilePath);
-        const zip = await JSZip.loadAsync(buffer);
-        const newPackage = new JSZip();
-        const packages_path = this.serverless.service.custom.packagePath.path;
-        const packages = newPackage.folder(packages_path);
-        const layer = packages.folder(layerObject.path);
+        await serviceFolder.loadAsync(artifactBuffer);
 
-        await Promise.all(
-          Object.keys(zip.files).map(async file => {
-            const content = await zip.file(file).async("uint8array");
+        await this._writeToFile(new JSZip(), artifactFilePath);
 
-            if (filePaths.includes(file)) {
-              return layer.file(file, content);
-            }
-
-            return packages.file(file, content);
-          })
-        );
-
-        return new Promise(resolve => {
-          newPackage
-            .generateNodeStream({
-              type: "nodebuffer",
-              streamFiles: true,
-              compression: "DEFLATE",
-              compressionOptions: {
-                level: 9
-              }
-            })
-            .pipe(fse.createWriteStream(artifactFilePath))
-            .on("finish", function() {
-              resolve();
-            });
-        });
+        return await this._writeToFile(tmpPackage, this._tmpFilePath());
       })
+    );
+  }
+
+  async updateRequirementsPath() {
+    this.serverless.cli.log("Updating requirements paths...");
+
+    return await Promise.all(
+      Object.keys(this.serverless.service.layers).map(async layerName => {
+        const artifactFilePath = this._artifactFilePath(layerName);
+        const packagesPath = this.serverless.service.custom.packagePath.path;
+
+        const artifactBuffer = await fse.readFileAsync(artifactFilePath);
+        const tmpBuffer = await fse.readFileAsync(this._tmpFilePath());
+
+        const artifact = new JSZip();
+        const packagesFolder = artifact.folder(packagesPath);
+
+        await artifact.loadAsync(tmpBuffer);
+        await packagesFolder.loadAsync(artifactBuffer);
+
+        return this._writeToFile(artifact, artifactFilePath);
+      })
+    );
+  }
+
+  _artifactFilePath(layerName) {
+    const zipFileName = `${layerName}.zip`;
+
+    return path.join(
+      this.serverless.config.servicePath,
+      ".serverless",
+      zipFileName
+    );
+  }
+
+  _tmpFilePath() {
+    return path.join(this.serverless.config.servicePath, ".serverless", "tmp");
+  }
+
+  async _writeToFile(zipFile, filePath) {
+    return await new Promise(resolve =>
+      zipFile
+        .generateNodeStream({
+          type: "nodebuffer",
+          streamFiles: true,
+          compression: "DEFLATE",
+          compressionOptions: {
+            level: 9
+          }
+        })
+        .pipe(fse.createWriteStream(filePath))
+        .on("finish", resolve)
     );
   }
 }
