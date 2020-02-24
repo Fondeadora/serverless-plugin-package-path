@@ -46,7 +46,7 @@ class ServerlessPluginPackagePath {
 
         await Promise.all(
           Object.keys(zip.files).map(async file => {
-            const content = await zip.file(file).async("string");
+            const content = await zip.file(file).async("uint8array");
 
             if (filePaths.includes(file)) {
               return layer.file(file, content);
