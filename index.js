@@ -1,6 +1,6 @@
 "use strict";
 
-const fse = require("fs-extra");
+const fs = require("fs");
 const JSZip = require("jszip");
 const path = require("path");
 
@@ -35,7 +35,7 @@ class ServerlessPluginPackagePath {
         const artifactFilePath = this._artifactFilePath(layerName);
         const packagesPath = this.serverless.service.custom.packagePath.path;
 
-        const artifactBuffer = await fse.readFileAsync(artifactFilePath);
+        const artifactBuffer = await fs.readFileAsync(artifactFilePath);
 
         const tmpPackage = new JSZip();
         const serviceFolder = tmpPackage.folder(
@@ -59,8 +59,8 @@ class ServerlessPluginPackagePath {
         const artifactFilePath = this._artifactFilePath(layerName);
         const packagesPath = this.serverless.service.custom.packagePath.path;
 
-        const artifactBuffer = await fse.readFileAsync(artifactFilePath);
-        const tmpBuffer = await fse.readFileAsync(this._tmpFilePath());
+        const artifactBuffer = await fs.readFileAsync(artifactFilePath);
+        const tmpBuffer = await fs.readFileAsync(this._tmpFilePath());
 
         const artifact = new JSZip();
         const packagesFolder = artifact.folder(packagesPath);
@@ -98,7 +98,7 @@ class ServerlessPluginPackagePath {
             level: 9
           }
         })
-        .pipe(fse.createWriteStream(filePath))
+        .pipe(fs.createWriteStream(filePath))
         .on("finish", resolve)
     );
   }
