@@ -1,6 +1,6 @@
 {
   "name": "serverless-plugin-package-path",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Serverless plugin to package python layer’s in a custom path",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/Fondeadora/serverless-plugin-package-path#readme",
   "dependencies": {
-    "serverless": "^1.64.0",
+    "serverless": "^1.74",
     "serverless-python-requirements": "^5.1.0"
   }
 }
