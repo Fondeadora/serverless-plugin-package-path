@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/Fondeadora/serverless-plugin-package-path#readme",
   "dependencies": {
-    "serverless": "^1.74",
+    "serverless": "^2.18",
     "serverless-python-requirements": "^5.1.0"
   }
 }
