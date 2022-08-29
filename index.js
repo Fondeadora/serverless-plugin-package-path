@@ -18,10 +18,9 @@ class ServerlessPluginPackagePath {
     this.commands = {};
 
     this.hooks = {
-      "after:package:createDeploymentArtifacts": this.updateServicePath.bind(
-        this
-      ),
-      "after:package:finalize": this.updateRequirementsPath.bind(this)
+      "after:package:createDeploymentArtifacts":
+        this.updateServicePath.bind(this),
+      "before:package:compileLayers": this.updateRequirementsPath.bind(this),
     };
   }
 
@@ -29,7 +28,7 @@ class ServerlessPluginPackagePath {
     this.serverless.cli.log("Updating service files paths...");
 
     return await Promise.all(
-      Object.keys(this.serverless.service.layers).map(async layerName => {
+      Object.keys(this.serverless.service.layers).map(async (layerName) => {
         const layerObject = this.serverless.service.getLayer(layerName);
 
         const artifactFilePath = this._artifactFilePath(layerName);
@@ -55,7 +54,7 @@ class ServerlessPluginPackagePath {
     this.serverless.cli.log("Updating requirements paths...");
 
     return await Promise.all(
-      Object.keys(this.serverless.service.layers).map(async layerName => {
+      Object.keys(this.serverless.service.layers).map(async (layerName) => {
         const artifactFilePath = this._artifactFilePath(layerName);
         const packagesPath = this.serverless.service.custom.packagePath.path;
 
@@ -84,19 +83,23 @@ class ServerlessPluginPackagePath {
   }
 
   _tmpFilePath() {
-    return path.join(this.serverless.config.servicePath, ".serverless", "tmp");
+    return path.join(
+      this.serverless.config.servicePath,
+      ".serverless",
+      "tmp.zip"
+    );
   }
 
   async _writeToFile(zipFile, filePath) {
-    return await new Promise(resolve =>
+    return await new Promise((resolve) =>
       zipFile
         .generateNodeStream({
           type: "nodebuffer",
           streamFiles: true,
           compression: "DEFLATE",
           compressionOptions: {
-            level: 9
-          }
+            level: 9,
+          },
         })
         .pipe(fs.createWriteStream(filePath))
         .on("finish", resolve)
