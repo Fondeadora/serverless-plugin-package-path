@@ -4,8 +4,8 @@ const fs = require("fs");
 const JSZip = require("jszip");
 const path = require("path");
 
-const packageService = require("serverless/lib/plugins/package/lib/packageService");
-const zipService = require("serverless/lib/plugins/package/lib/zipService");
+const packageService = require("serverless/lib/plugins/package/lib/package-service");
+const zipService = require("serverless/lib/plugins/package/lib/zip-service");
 
 class ServerlessPluginPackagePath {
   constructor(serverless, options) {
