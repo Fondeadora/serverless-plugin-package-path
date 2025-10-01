@@ -1,29 +1,61 @@
-service: test-plugin-package-path
+service: test-common-layer
 
 frameworkVersion: "4"
-
-provider:
-  name: aws
-  runtime: python3.11
-  region: us-east-1
 
 plugins:
   - ../../index.js
   - serverless-python-requirements
 
-custom:
-  packagePath:
-    path: python/lib/python3.11/site-packages
-  pythonRequirements:
-    dockerizePip: false
-    layer:
-      name: ${self:service}-dependencies
-      description: Python dependencies layer
-      compatibleRuntimes:
-        - python3.11
+provider:
+  name: aws
+  runtime: python3.12
+  stage: ${opt:stage, "dev"}
+  region: us-east-1
 
-functions:
-  hello:
-    handler: handler.hello
-    layers:
-      - { Ref: PythonRequirementsLambdaLayer }
+layers:
+  common312:
+    name: test-common-layer-${self:provider.stage}
+    description: Test Common Layer with package path plugin
+    path: common
+    compatibleRuntimes:
+      - python3.12
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+    slim: true
+    strip: true
+    noDeploy:
+      - botocore
+      - boto3
+      - urllib3
+      - setuptools
+      - docutils
+      - dateutil
+      - factory
+      - faker
+      - jmespath
+      - _pytest
+      - pytest
+      - s3transfer
+      - setuptools
+      - six
+      - urllib3
+  packagePath:
+    path: python/lib/python3.12/site-packages
+
+package:
+  artifact: ./.serverless/common312.zip
+  patterns:
+    - "!tmp/**"
+    - "!.git/**"
+    - "!.venv/**"
+    - "!env/**"
+    - "!node_modules/**"
+    - "!scripts/**"
+    - "!.env"
+    - "!.mypy_cache/**"
+    - "!tests/**"
+    - "!**/__pycache__"
+    - "!**/*.pyc"
+    - "!package-lock.json"

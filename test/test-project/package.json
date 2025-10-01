@@ -1,7 +1,7 @@
 {
-  "name": "test-plugin-package-path",
+  "name": "test-common-layer",
   "version": "1.0.0",
-  "description": "Test project for serverless-plugin-package-path",
+  "description": "Test project for serverless-plugin-package-path (mirrors f4b-common-layer setup)",
   "private": true,
   "scripts": {
     "package": "serverless package",

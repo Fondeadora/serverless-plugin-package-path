@@ -16,7 +16,7 @@ const path = require('path');
 const JSZip = require('jszip');
 
 const TEST_PROJECT_DIR = path.join(__dirname, 'test-project');
-const EXPECTED_PATH_PREFIX = 'python/lib/python3.11/site-packages/';
+const EXPECTED_PATH_PREFIX = 'python/lib/python3.12/site-packages/';
 
 // Color codes for terminal output
 const colors = {
