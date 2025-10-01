@@ -4,7 +4,7 @@
   "description": "Serverless plugin to package python layer’s in a custom path",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test/run-test.js"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,8 @@
   },
   "homepage": "https://github.com/Fondeadora/serverless-plugin-package-path#readme",
   "dependencies": {
-    "serverless": "^3.39.0 || 4",
+    "jszip": "^3.10.1",
+    "serverless": "^3.39.0 || ^4.19.1",
     "serverless-python-requirements": "^6.1.2"
   }
 }

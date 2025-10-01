@@ -41,6 +41,11 @@ build/Release
 node_modules/
 jspm_packages/
 
+# Test project artifacts
+test/test-project/node_modules/
+test/test-project/.serverless/
+test/test-project/package-lock.json
+
 # TypeScript v1 declaration files
 typings/
 

@@ -1,0 +1,29 @@
+service: test-plugin-package-path
+
+frameworkVersion: "4"
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: us-east-1
+
+plugins:
+  - ../../index.js
+  - serverless-python-requirements
+
+custom:
+  packagePath:
+    path: python/lib/python3.11/site-packages
+  pythonRequirements:
+    dockerizePip: false
+    layer:
+      name: ${self:service}-dependencies
+      description: Python dependencies layer
+      compatibleRuntimes:
+        - python3.11
+
+functions:
+  hello:
+    handler: handler.hello
+    layers:
+      - { Ref: PythonRequirementsLambdaLayer }

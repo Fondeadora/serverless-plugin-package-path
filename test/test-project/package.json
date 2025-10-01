@@ -1,0 +1,14 @@
+{
+  "name": "test-plugin-package-path",
+  "version": "1.0.0",
+  "description": "Test project for serverless-plugin-package-path",
+  "private": true,
+  "scripts": {
+    "package": "serverless package",
+    "clean": "rm -rf .serverless node_modules"
+  },
+  "devDependencies": {
+    "serverless": "^4.19.1",
+    "serverless-python-requirements": "^6.1.2"
+  }
+}
